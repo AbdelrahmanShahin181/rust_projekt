@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{actix\PYGZus{}web}::\PYG{p}{\PYGZob{}}\PYG{n}{web}::\PYG{n}{Data}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{App}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HttpServer}\PYG{p}{\PYGZcb{}}\PYG{p}{;}
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{dotenv}::\PYG{n}{dotenv}\PYG{p}{;}
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{sqlx}::\PYG{p}{\PYGZob{}}\PYG{n}{postgres}::\PYG{n}{PgPoolOptions}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Pool}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Postgres}\PYG{p}{\PYGZcb{}}\PYG{p}{;}
+
+\PYG{k}{mod} \PYG{n+nn}{services}\PYG{p}{;}
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{services}::\PYG{p}{\PYGZob{}}\PYG{n}{fetch\PYGZus{}users}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{fetch\PYGZus{}user\PYGZus{}workingdays}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{create\PYGZus{}user}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{create\PYGZus{}user\PYGZus{}workingday}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{update\PYGZus{}user}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{update\PYGZus{}user\PYGZus{}workingday}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{delete\PYGZus{}user}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{delete\PYGZus{}user\PYGZus{}workingday}\PYG{p}{\PYGZcb{}}\PYG{p}{;}
+\end{Verbatim}

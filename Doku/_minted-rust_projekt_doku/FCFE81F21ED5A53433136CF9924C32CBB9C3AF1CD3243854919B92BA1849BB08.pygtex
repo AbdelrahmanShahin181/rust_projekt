@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{actix\PYGZus{}web}::\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{get}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{post}\PYG{p}{,}\PYG{n}{put}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{delete}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{web}::\PYG{p}{\PYGZob{}}\PYG{n}{Data}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Json}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Path}\PYG{p}{\PYGZcb{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{Responder}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{HttpResponse}
+\PYG{p}{\PYGZcb{}}\PYG{p}{;}
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{serde}::\PYG{p}{\PYGZob{}}\PYG{n}{Deserialize}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{Serialize}\PYG{p}{\PYGZcb{}}\PYG{p}{;}
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{sqlx}::\PYG{p}{\PYGZob{}}\PYG{n+nb+bp}{self}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{FromRow}\PYG{p}{\PYGZcb{}}\PYG{p}{;}
+\PYG{k}{use}\PYG{+w}{ }\PYG{n}{chrono}::\PYG{p}{\PYGZob{}}\PYG{n}{NaiveDateTime}\PYG{p}{\PYGZcb{}}\PYG{p}{;}
+\PYG{k}{use}\PYG{+w}{ }\PYG{k}{crate}::\PYG{n}{AppState}\PYG{p}{;}
+\end{Verbatim}

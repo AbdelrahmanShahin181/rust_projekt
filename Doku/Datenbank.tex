@@ -1,0 +1,50 @@
+
+In diesem Abschnitt werden die Schritte zur Installation von PostgreSQL und die Einrichtung eines Datenbankservers auf Ihrem Computer beschrieben. Außerdem werden die Tabellenstruktur und die Schema-Definitionen für die Datenbank vorgestellt.
+
+\subsection{Installation von PostgreSQL}
+
+Um PostgreSQL auf einem Windows-System zu installieren, müssen die folgenden Schritte ausgeführt werden:
+
+\begin{enumerate}
+\item Unter der offiziellen PostgreSQL-Website \url{https://www.postgresql.org/download/windows/} müssen den Anweisungen für Windows befolgt werden.
+\item Installationsprogramm starten und den Anweisungen auf dem Bildschirm folgen, um die Installation abzuschließen.
+\item Die Option pgAdmin4 auswählen, um pdAdmin4 für die Verwaltung der Datenbank zu installieren.
+\end{enumerate}
+
+\subsection{Einrichtung eines Datenbankservers}
+
+Nachdem PostgreSQL erfolgreich installiert wurde, kann ein Datenbankserver auf eingerichtet werden. Hierfür wurde pgAdmin4 benutzt:
+
+\begin{enumerate}
+\item In der linken Navigationsleiste wird auf \enquote{Servers/PostgreSQL/Databases} geklickt.
+\item Durch einen Rechtsklick auf \enquote{Databases} wird eine neue Datenbank erstellt oder im Terminal wird der Befehl \enquote{CREATE DATABASE <datenbankname>;} ausgeführt. Standardmäßig wird eine Datenbank namens "postgres" erstellt.
+\item Standardmäßig läuft der Server auf Localhost auf Port 5432.
+\end{enumerate}
+
+\subsection{Tabellenstruktur und Schema-Definitionen}
+
+In unserer Beispielanwendung werden zwei Tabellen verwendet: die Tabelle "users" und die Tabelle "working\_days". Die Struktur und Definitionen dieser Tabellen sind wie folgt:
+
+\begin{minted}{sql}
+-- Tabelle "users"
+CREATE TABLE users (
+id serial primary key,
+first_name varchar not null,
+last_name varchar not null
+);
+
+-- Tabelle "working_days"
+CREATE TABLE working_days (
+id SERIAL PRIMARY KEY,
+starting_time varchar ,
+ending_time varchar ,
+working_hours varchar ,
+user_id INTEGER REFERENCES "users"(id) ON DELETE CASCADE
+);
+\end{minted}
+
+Die Tabelle \enquote{users} enthält drei Spalten: \enquote{id}, \enquote{first\_name} und \enquote{last\_name}. Die \enquote{id}-Spalte ist der Primärschlüssel der Tabelle. 
+Die Tabelle \enquote{working\_days} enthält fünf Spalten: \enquote{id}, \enquote{starting\_time}, \enquote{ending\_time}, \enquote{working\_hours} und \enquote{user\_id}. Die \enquote{id}-Spalte ist auch hier der Primärschlüssel. Die Spalte \enquote{user\_id} ist ein Fremdschlüssel, der auf die \enquote{id}-Spalte der Tabelle \enquote{users} verweist und das Löschen von Datensätzen in der Tabelle \enquote{users} automatisch das Löschen der entsprechenden Datensätze in der Tabelle \enquote{working\_days} auslöst.
+Die Datentypen von \enquote{starting\_time}, \enquote{ending\_time} und \enquote{working\_hours} sind auf VARCHAR gesetzt. Das Handling der Arbeitszeitrechnung wird im Backend in Rust durchgeführt. 
+
+Mit diesen Schritten und Definitionen sollte die PostgreSQL-Datenbank einsatzbereit sein.

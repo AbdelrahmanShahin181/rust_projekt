@@ -1,0 +1,107 @@
+\documentclass[1.5pt]{article}
+\usepackage[english, ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{url}
+\usepackage[german=quotes]{csquotes}
+
+\setlength\parindent{0cm}
+\setminted{linenos = true, breaklines = true, bgcolor=Grau, tabsize=4, autogobble, escapeinside=||}
+\geometry{a4paper, left = 2cm, top = 3cm, right= 2cm, bottom = 2cm}
+
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\rightmark}
+\renewcommand{\sectionmark}[1]{\markboth{\textsl{Kapitel \thesection} \ #1}{\markright{\thesubsection \ #1}}}
+\pagestyle{fancy}
+
+\begin{document}
+
+\definecolor{Grau}{gray}{0.96}
+
+	\begin{titlepage}
+		
+		\hspace{\fill}\textbf{Hochschule Bochum}\\\hspace*{\fill}\textbf{Fachbereich Elektrotechnik und Informatik}
+		
+		\begin{center}
+			\vspace*{\fill}
+%			\includegraphics[scale=0.2]{rustLogo}\\
+			\vspace{\fill}\textbf{\large Dokumentation Rustprojekt}
+			
+			\vspace{0.5cm}
+			\textbf{\large\glqq Webproject Arbeitszeitverwaltung \grqq}\vspace{\fill}
+			
+		\end{center}
+		
+		\vspace{2cm}
+		
+		Prüfer: Prof. Dr.-Ing. Edmund Coersmeier
+		
+		\vspace{1cm}
+		
+		Abdelrahman Shahin\\
+		Matrikelnummer: 18310070\\
+		
+		\vspace{0.5cm}
+		
+		Studiengang: Informatik\\
+		6. Fachsemester, Sommersemester 2023
+		
+		
+		
+	\end{titlepage}
+	
+	\fancyfoot[L]{Abdelrahman Shahin}
+	\fancyfoot[C]{}
+	\fancyfoot[R]{Rustprojekt}
+	
+	%	keine Seitennummerierung auf der Abstract Seite
+	\pagenumbering{gobble}
+	\input{Zusammenfassung.tex}
+	
+	%	Ändern der Footnote
+	\fancyfoot[L]{Abdelrahman Shahin}
+	%	Ändern der Referenz der Seitennummerierung in der Footnote
+	\fancyfoot[C]{\thepage \ / \pageref{LetzteSeite}}
+	\fancyfoot[R]{Rustprojekt}
+	
+	%	Zähler für römische Seitennummerierung einrichten
+	\pagenumbering{arabic}
+	
+	%	Inhaltsverzeichnis
+	\setcounter{tocdepth}{3}
+	\tableofcontents
+	\newpage
+
+
+\section{Einleitung}
+    \input{Einleitung.tex}
+
+\section{Installation}
+    \input{Installation.tex}
+    
+\section{Datenbank}
+    \input{Datenbank.tex}
+
+\section{Backend}
+    \input{Backend.tex}
+
+\section{Frontend}
+    \input{Frontend.tex}
+
+\section{Deployment}
+    \input{Deployment.tex}
+
+\section{Zusammenfassung und Ausblick}
+    \subsection{Zusammenfassung der wichtigsten Punkte}
+    \subsection{Ausblick auf zukünftige Entwicklungen}
+
+\section{Anhang}
+    \subsection{Glossar}
+    \subsection{Beispielcode}
+    \subsection{Referenzen und weiterführende Literatur}
+\label {LetzteSeite}
+\end{document}

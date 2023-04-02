@@ -1,0 +1,54 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+cp}{\PYGZsh{}[}\PYG{c+cp}{put(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{/users/\PYGZob{}id\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{c+cp}{)}\PYG{c+cp}{]}
+\PYG{k}{pub}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k}{fn} \PYG{n+nf}{update\PYGZus{}user}\PYG{p}{(}\PYG{n}{state}: \PYG{n+nc}{Data}\PYG{o}{\PYGZlt{}}\PYG{n}{AppState}\PYG{o}{\PYGZgt{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{path}: \PYG{n+nc}{Path}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{i32}\PYG{o}{\PYGZgt{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{body}: \PYG{n+nc}{Json}\PYG{o}{\PYGZlt{}}\PYG{n}{CreateUser}\PYG{o}{\PYGZgt{}}\PYG{p}{)}\PYG{+w}{ }\PYGZhy{}\PYGZgt{} \PYG{n+nc}{impl}\PYG{+w}{ }\PYG{n}{Responder}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{id}: \PYG{k+kt}{i32} \PYG{o}{=}\PYG{+w}{ }\PYG{n}{path}\PYG{p}{.}\PYG{n}{into\PYGZus{}inner}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{match}\PYG{+w}{ }\PYG{n}{sqlx}::\PYG{n}{query}\PYG{p}{(}
+\PYG{+w}{        }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{UPDATE users SET first\PYGZus{}name = \PYGZdl{}1, last\PYGZus{}name = \PYGZdl{}2 WHERE id = \PYGZdl{}3}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{    }\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{body}\PYG{p}{.}\PYG{n}{first\PYGZus{}name}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{body}\PYG{p}{.}\PYG{n}{last\PYGZus{}name}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{execute}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{state}\PYG{p}{.}\PYG{n}{db}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{k}{await}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{n}{\PYGZus{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{finish}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n+nb}{Err}\PYG{p}{(}\PYG{n}{err}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n}{InternalServerError}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{json}\PYG{p}{(}\PYG{n+nf+fm}{format!}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Failed to update user: \PYGZob{}\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{err}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\PYG{c+cp}{\PYGZsh{}[}\PYG{c+cp}{put(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{/users/\PYGZob{}id\PYGZcb{}/workingdays/\PYGZob{}workingday\PYGZus{}id\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{c+cp}{)}\PYG{c+cp}{]}
+\PYG{k}{pub}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k}{fn} \PYG{n+nf}{update\PYGZus{}user\PYGZus{}workingday}\PYG{p}{(}
+\PYG{+w}{    }\PYG{n}{state}: \PYG{n+nc}{Data}\PYG{o}{\PYGZlt{}}\PYG{n}{AppState}\PYG{o}{\PYGZgt{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{path}: \PYG{n+nc}{Path}\PYG{o}{\PYGZlt{}}\PYG{p}{(}\PYG{k+kt}{i32}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{i32}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{body}: \PYG{n+nc}{Json}\PYG{o}{\PYGZlt{}}\PYG{n}{CreateWorkingDay}\PYG{o}{\PYGZgt{}}\PYG{p}{,}
+\PYG{p}{)}\PYG{+w}{ }\PYGZhy{}\PYGZgt{} \PYG{n+nc}{impl}\PYG{+w}{ }\PYG{n}{Responder}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{id}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{workingday\PYGZus{}id}\PYG{p}{)}: \PYG{p}{(}\PYG{k+kt}{i32}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{i32}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{path}\PYG{p}{.}\PYG{n}{into\PYGZus{}inner}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Parse starting\PYGZus{}time and ending\PYGZus{}time}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{start\PYGZus{}time\PYGZus{}result}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{NaiveDateTime}::\PYG{n}{parse\PYGZus{}from\PYGZus{}str}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{body}\PYG{p}{.}\PYG{n}{starting\PYGZus{}time}\PYG{p}{.}\PYG{n}{as\PYGZus{}ref}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{unwrap}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZpc{}Y\PYGZhy{}\PYGZpc{}m\PYGZhy{}\PYGZpc{}d \PYGZpc{}H:\PYGZpc{}M:\PYGZpc{}S}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{end\PYGZus{}time\PYGZus{}result}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{NaiveDateTime}::\PYG{n}{parse\PYGZus{}from\PYGZus{}str}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{body}\PYG{p}{.}\PYG{n}{ending\PYGZus{}time}\PYG{p}{.}\PYG{n}{as\PYGZus{}ref}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{unwrap}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZpc{}Y\PYGZhy{}\PYGZpc{}m\PYGZhy{}\PYGZpc{}d \PYGZpc{}H:\PYGZpc{}M:\PYGZpc{}S}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{c+c1}{// Check if both start\PYGZus{}time and end\PYGZus{}time were parsed successfully}
+\PYG{+w}{    }\PYG{k}{if}\PYG{+w}{ }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{p}{(}\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{n}{start\PYGZus{}time}\PYG{p}{)}\PYG{p}{,}\PYG{+w}{ }\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{n}{end\PYGZus{}time}\PYG{p}{)}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{start\PYGZus{}time\PYGZus{}result}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{end\PYGZus{}time\PYGZus{}result}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{duration}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{end\PYGZus{}time}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{start\PYGZus{}time}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{hours}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{duration}\PYG{p}{.}\PYG{n}{num\PYGZus{}hours}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{minutes}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{duration}\PYG{p}{.}\PYG{n}{num\PYGZus{}minutes}\PYG{p}{(}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{hours}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{60}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{seconds}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{duration}\PYG{p}{.}\PYG{n}{num\PYGZus{}seconds}\PYG{p}{(}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{hours}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{3600}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{minutes}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{l+m+mi}{60}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{working\PYGZus{}hours}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nf+fm}{format!}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{\PYGZob{}\PYGZcb{}:\PYGZob{}\PYGZcb{}:\PYGZob{}\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{hours}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{minutes}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{seconds}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{        }\PYG{k}{match}\PYG{+w}{ }\PYG{n}{sqlx}::\PYG{n}{query}\PYG{p}{(}
+\PYG{+w}{            }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{UPDATE working\PYGZus{}days SET starting\PYGZus{}time = \PYGZdl{}1, ending\PYGZus{}time = \PYGZdl{}2, working\PYGZus{}hours = \PYGZdl{}3 WHERE id = \PYGZdl{}4 AND user\PYGZus{}id = \PYGZdl{}5}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{        }\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{body}\PYG{p}{.}\PYG{n}{starting\PYGZus{}time}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{body}\PYG{p}{.}\PYG{n}{ending\PYGZus{}time}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{working\PYGZus{}hours}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{n}{workingday\PYGZus{}id}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{execute}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{state}\PYG{p}{.}\PYG{n}{db}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{k}{await}
+\PYG{+w}{        }\PYG{p}{\PYGZob{}}
+\PYG{+w}{            }\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{n}{\PYGZus{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{finish}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}
+\PYG{+w}{            }\PYG{n+nb}{Err}\PYG{p}{(}\PYG{n}{err}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n}{InternalServerError}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{json}\PYG{p}{(}\PYG{n+nf+fm}{format!}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Failed to update working day: \PYGZob{}\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{err}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{\PYGZcb{}}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{+w}{ }\PYG{k}{else}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{c+c1}{// Handle case where either start\PYGZus{}time or end\PYGZus{}time could not be parsed}
+\PYG{+w}{        }\PYG{n}{HttpResponse}::\PYG{n}{BadRequest}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{json}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Invalid date format}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

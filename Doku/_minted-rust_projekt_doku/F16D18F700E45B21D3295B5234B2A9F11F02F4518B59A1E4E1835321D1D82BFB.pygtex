@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Tabelle \PYGZdq{}users\PYGZdq{}}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{TABLE}\PYG{+w}{ }\PYG{n}{users}\PYG{+w}{ }\PYG{p}{(}
+\PYG{n}{id}\PYG{+w}{ }\PYG{n+nb}{serial}\PYG{+w}{ }\PYG{k}{primary}\PYG{+w}{ }\PYG{k}{key}\PYG{p}{,}
+\PYG{n}{first\PYGZus{}name}\PYG{+w}{ }\PYG{n+nb}{varchar}\PYG{+w}{ }\PYG{k}{not}\PYG{+w}{ }\PYG{k}{null}\PYG{p}{,}
+\PYG{n}{last\PYGZus{}name}\PYG{+w}{ }\PYG{n+nb}{varchar}\PYG{+w}{ }\PYG{k}{not}\PYG{+w}{ }\PYG{k}{null}
+\PYG{p}{);}
+
+\PYG{c+c1}{\PYGZhy{}\PYGZhy{} Tabelle \PYGZdq{}working\PYGZus{}days\PYGZdq{}}
+\PYG{k}{CREATE}\PYG{+w}{ }\PYG{k}{TABLE}\PYG{+w}{ }\PYG{n}{working\PYGZus{}days}\PYG{+w}{ }\PYG{p}{(}
+\PYG{n}{id}\PYG{+w}{ }\PYG{n+nb}{SERIAL}\PYG{+w}{ }\PYG{k}{PRIMARY}\PYG{+w}{ }\PYG{k}{KEY}\PYG{p}{,}
+\PYG{n}{starting\PYGZus{}time}\PYG{+w}{ }\PYG{n+nb}{varchar}\PYG{+w}{ }\PYG{p}{,}
+\PYG{n}{ending\PYGZus{}time}\PYG{+w}{ }\PYG{n+nb}{varchar}\PYG{+w}{ }\PYG{p}{,}
+\PYG{n}{working\PYGZus{}hours}\PYG{+w}{ }\PYG{n+nb}{varchar}\PYG{+w}{ }\PYG{p}{,}
+\PYG{n}{user\PYGZus{}id}\PYG{+w}{ }\PYG{n+nb}{INTEGER}\PYG{+w}{ }\PYG{k}{REFERENCES}\PYG{+w}{ }\PYG{l+s+ss}{\PYGZdq{}users\PYGZdq{}}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{ON}\PYG{+w}{ }\PYG{k}{DELETE}\PYG{+w}{ }\PYG{k}{CASCADE}
+\PYG{p}{);}
+\end{Verbatim}

@@ -1,0 +1,38 @@
+\babel@toc {ngerman}{}\relax 
+\contentsline {section}{\numberline {1}Einleitung}{2}{}%
+\contentsline {subsection}{\numberline {1.1}Ziele der Dokumentation}{2}{}%
+\contentsline {subsection}{\numberline {1.2}Einführung in Rust und Webanwendungen}{2}{}%
+\contentsline {section}{\numberline {2}Installation}{2}{}%
+\contentsline {subsection}{\numberline {2.1}Rust-Installation}{2}{}%
+\contentsline {subsection}{\numberline {2.2}Installation von C++ Build Tools}{2}{}%
+\contentsline {subsection}{\numberline {2.3}Einrichtung einer Entwicklungsumgebung}{2}{}%
+\contentsline {section}{\numberline {3}Datenbank}{2}{}%
+\contentsline {subsection}{\numberline {3.1}Installation von PostgreSQL}{2}{}%
+\contentsline {subsection}{\numberline {3.2}Einrichtung eines Datenbankservers}{3}{}%
+\contentsline {subsection}{\numberline {3.3}Tabellenstruktur und Schema-Definitionen}{3}{}%
+\contentsline {section}{\numberline {4}Backend}{3}{}%
+\contentsline {subsection}{\numberline {4.1}Projekt starten}{3}{}%
+\contentsline {subsection}{\numberline {4.2}Abhängigkeiten}{3}{}%
+\contentsline {subsection}{\numberline {4.3}API}{4}{}%
+\contentsline {subsubsection}{\numberline {4.3.1}main.rs}{4}{}%
+\contentsline {paragraph}{Importieren von Paketen}{4}{}%
+\contentsline {paragraph}{Datenbankverbindungspool}{4}{}%
+\contentsline {paragraph}{Main Funktion}{5}{}%
+\contentsline {subsubsection}{\numberline {4.3.2}services.rs}{5}{}%
+\contentsline {paragraph}{Importieren von Paketen}{5}{}%
+\contentsline {paragraph}{Definieren von Datenstrukturen}{6}{}%
+\contentsline {paragraph}{Get-Methoden}{6}{}%
+\contentsline {paragraph}{Post-Methoden}{7}{}%
+\contentsline {paragraph}{Put-Methoden}{8}{}%
+\contentsline {paragraph}{Delete-Methoden}{9}{}%
+\contentsline {section}{\numberline {5}Frontend}{10}{}%
+\contentsline {section}{\numberline {6}Deployment}{10}{}%
+\contentsline {subsection}{\numberline {6.1}Docker}{10}{}%
+\contentsline {subsubsection}{\numberline {6.1.1}Installation auf dem Linuxserver}{10}{}%
+\contentsline {section}{\numberline {7}Zusammenfassung und Ausblick}{10}{}%
+\contentsline {subsection}{\numberline {7.1}Zusammenfassung der wichtigsten Punkte}{10}{}%
+\contentsline {subsection}{\numberline {7.2}Ausblick auf zukünftige Entwicklungen}{10}{}%
+\contentsline {section}{\numberline {8}Anhang}{10}{}%
+\contentsline {subsection}{\numberline {8.1}Glossar}{10}{}%
+\contentsline {subsection}{\numberline {8.2}Beispielcode}{10}{}%
+\contentsline {subsection}{\numberline {8.3}Referenzen und weiterführende Literatur}{10}{}%

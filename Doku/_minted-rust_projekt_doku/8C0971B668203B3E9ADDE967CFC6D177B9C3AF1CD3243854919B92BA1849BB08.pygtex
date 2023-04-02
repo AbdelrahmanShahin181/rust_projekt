@@ -1,0 +1,28 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+cp}{\PYGZsh{}[}\PYG{c+cp}{actix\PYGZus{}web::main}\PYG{c+cp}{]}
+\PYG{k}{async}\PYG{+w}{ }\PYG{k}{fn} \PYG{n+nf}{main}\PYG{p}{(}\PYG{p}{)}\PYG{+w}{ }\PYGZhy{}\PYGZgt{} \PYG{n+nc}{std}::\PYG{n}{io}::\PYG{n+nb}{Result}\PYG{o}{\PYGZlt{}}\PYG{p}{(}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{n}{dotenv}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{ok}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{database\PYGZus{}url}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{std}::\PYG{n}{env}::\PYG{n}{var}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{DATABASE\PYGZus{}URL}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{.}\PYG{n}{expect}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{DATABASE\PYGZus{}URL must be set}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{pool}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{PgPoolOptions}::\PYG{n}{new}\PYG{p}{(}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{max\PYGZus{}connections}\PYG{p}{(}\PYG{l+m+mi}{5}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{connect}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{database\PYGZus{}url}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{k}{await}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{expect}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Error building a connection pool}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}\PYG{p}{;}
+
+\PYG{+w}{    }\PYG{n}{HttpServer}::\PYG{n}{new}\PYG{p}{(}\PYG{k}{move}\PYG{+w}{ }\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n}{App}::\PYG{n}{new}\PYG{p}{(}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{app\PYGZus{}data}\PYG{p}{(}\PYG{n}{Data}::\PYG{n}{new}\PYG{p}{(}\PYG{n}{AppState}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{n}{db}: \PYG{n+nc}{pool}\PYG{p}{.}\PYG{n}{clone}\PYG{p}{(}\PYG{p}{)}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}\PYG{p}{)}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{fetch\PYGZus{}users}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{fetch\PYGZus{}user\PYGZus{}workingdays}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{create\PYGZus{}user}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{create\PYGZus{}user\PYGZus{}workingday}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{update\PYGZus{}user}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{update\PYGZus{}user\PYGZus{}workingday}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{delete\PYGZus{}user}\PYG{p}{)}
+\PYG{+w}{            }\PYG{p}{.}\PYG{n}{service}\PYG{p}{(}\PYG{n}{delete\PYGZus{}user\PYGZus{}workingday}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{127.0.0.1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{8080}\PYG{p}{)}\PYG{p}{)}\PYG{o}{?}
+\PYG{+w}{    }\PYG{p}{.}\PYG{n}{run}\PYG{p}{(}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{.}\PYG{k}{await}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

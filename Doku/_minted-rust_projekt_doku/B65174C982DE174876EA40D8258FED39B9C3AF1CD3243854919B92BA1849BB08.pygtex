@@ -1,0 +1,32 @@
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c+cp}{\PYGZsh{}[}\PYG{c+cp}{delete(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{/users/\PYGZob{}id\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{c+cp}{)}\PYG{c+cp}{]}
+\PYG{k}{pub}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k}{fn} \PYG{n+nf}{delete\PYGZus{}user}\PYG{p}{(}\PYG{n}{state}: \PYG{n+nc}{Data}\PYG{o}{\PYGZlt{}}\PYG{n}{AppState}\PYG{o}{\PYGZgt{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{path}: \PYG{n+nc}{Path}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{i32}\PYG{o}{\PYGZgt{}}\PYG{p}{)}\PYG{+w}{ }\PYGZhy{}\PYGZgt{} \PYG{n+nc}{impl}\PYG{+w}{ }\PYG{n}{Responder}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{n}{id}: \PYG{k+kt}{i32} \PYG{o}{=}\PYG{+w}{ }\PYG{n}{path}\PYG{p}{.}\PYG{n}{into\PYGZus{}inner}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{match}\PYG{+w}{ }\PYG{n}{sqlx}::\PYG{n}{query}\PYG{p}{(}
+\PYG{+w}{        }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{DELETE FROM users WHERE id = \PYGZdl{}1}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{    }\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{execute}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{state}\PYG{p}{.}\PYG{n}{db}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{k}{await}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{n}{\PYGZus{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{finish}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n+nb}{Err}\PYG{p}{(}\PYG{n}{err}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n}{InternalServerError}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{json}\PYG{p}{(}\PYG{n+nf+fm}{format!}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Failed to delete user: \PYGZob{}\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{err}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+
+\PYG{c+cp}{\PYGZsh{}[}\PYG{c+cp}{delete(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{/users/\PYGZob{}id\PYGZcb{}/workingdays/\PYGZob{}workingday\PYGZus{}id\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{c+cp}{)}\PYG{c+cp}{]}
+\PYG{k}{pub}\PYG{+w}{ }\PYG{k}{async}\PYG{+w}{ }\PYG{k}{fn} \PYG{n+nf}{delete\PYGZus{}user\PYGZus{}workingday}\PYG{p}{(}\PYG{n}{state}: \PYG{n+nc}{Data}\PYG{o}{\PYGZlt{}}\PYG{n}{AppState}\PYG{o}{\PYGZgt{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{path}: \PYG{n+nc}{Path}\PYG{o}{\PYGZlt{}}\PYG{p}{(}\PYG{k+kt}{i32}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{i32}\PYG{p}{)}\PYG{o}{\PYGZgt{}}\PYG{p}{)}\PYG{+w}{ }\PYGZhy{}\PYGZgt{} \PYG{n+nc}{impl}\PYG{+w}{ }\PYG{n}{Responder}\PYG{+w}{ }\PYG{p}{\PYGZob{}}
+\PYG{+w}{    }\PYG{k+kd}{let}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{id}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{workingday\PYGZus{}id}\PYG{p}{)}: \PYG{p}{(}\PYG{k+kt}{i32}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{i32}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{path}\PYG{p}{.}\PYG{n}{into\PYGZus{}inner}\PYG{p}{(}\PYG{p}{)}\PYG{p}{;}
+\PYG{+w}{    }\PYG{k}{match}\PYG{+w}{ }\PYG{n}{sqlx}::\PYG{n}{query}\PYG{p}{(}
+\PYG{+w}{        }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{DELETE FROM working\PYGZus{}days WHERE id = \PYGZdl{}1 AND user\PYGZus{}id = \PYGZdl{}2}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{    }\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{n}{workingday\PYGZus{}id}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{bind}\PYG{p}{(}\PYG{n}{id}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{n}{execute}\PYG{p}{(}\PYG{o}{\PYGZam{}}\PYG{n}{state}\PYG{p}{.}\PYG{n}{db}\PYG{p}{)}
+\PYG{+w}{        }\PYG{p}{.}\PYG{k}{await}
+\PYG{+w}{    }\PYG{p}{\PYGZob{}}
+\PYG{+w}{        }\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{n}{\PYGZus{}}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n+nb}{Ok}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{finish}\PYG{p}{(}\PYG{p}{)}\PYG{p}{,}
+\PYG{+w}{        }\PYG{n+nb}{Err}\PYG{p}{(}\PYG{n}{err}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{o}{\PYGZgt{}}\PYG{+w}{ }\PYG{n}{HttpResponse}::\PYG{n}{InternalServerError}\PYG{p}{(}\PYG{p}{)}\PYG{p}{.}\PYG{n}{json}\PYG{p}{(}\PYG{n+nf+fm}{format!}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Failed to delete working day: \PYGZob{}\PYGZcb{}}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{err}\PYG{p}{.}\PYG{n}{to\PYGZus{}string}\PYG{p}{(}\PYG{p}{)}\PYG{p}{)}\PYG{p}{)}
+\PYG{+w}{    }\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

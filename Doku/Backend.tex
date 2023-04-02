@@ -1,0 +1,316 @@
+
+\subsection{Projekt starten}
+	Um ein Rustprojekt zu starten wird der Befehl \texttt{cargo new working\_time\_webproject } ausgeführt. 
+	So wird ein neuer Projekt erstellt und man kann in den neu erstellten Ordner mit \texttt{cd working\_time\_webproject navigieren}
+	Standardmäßig hat man im Projektverzeichnis den src Ordner sowie die Cargo.toml Datei. 
+
+\subsection{Abhängigkeiten}
+	Abhängigkeiten werden in der Cargo.toml Datei. Die sieht wie folgt aus:
+	\begin{verbatim}
+	[package]
+	name = "working_time_webproject"
+	version = "0.1.0"
+	edition = "2021"
+	
+	# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+	
+	[dependencies]
+	actix = "0.13.0"
+	actix-web = "4.2.1"
+	dotenv = "0.15.0"
+	serde = { version = "1.0.145", features = ["derive"] }
+	serde_json = "1.0.86"
+	sqlx = { version = "0.6.2", features = ["runtime-async-std-native-tls", "postgres"] }
+	chrono = "0.4"
+	\end{verbatim}
+	
+	Im ersten Abschnitt der Datei findet sich zunächst die Paketdefinition, die standardmäßig bei der Erstellung des Projekts gesetzt wird.
+
+	Im Abschnitt dependencies werden die Abhängigkeiten aufgeführt, die für das Projekt verwendet werden. In diesem Projekt werden folgende Abhängigkeiten genutzt:
+
+	\begin{enumerate}
+	\item actix und actix-web werden verwendet, um den Actix-Webserver zu nutzen.
+	\item dotenv wird eingesetzt, um auf die Datei ".env" zuzugreifen, in der Umgebungsvariablen definiert werden können. In diesem Projekt wird die Umgebungsvariable DATABASE\_URL verwendet, um eine Verbindung zur PostgreSQL-Datenbank herzustellen.
+	\item serde und serde\_json werden für die Serialisierung und Deserialisierung von Objekten genutzt, um reibungslose Datenbankoperationen ohne Datentypenkonflikte zu gewährleisten.
+	\item sqlx wird hier verwendet, um eine Verbindung zu einer PostgreSQL-Datenbank herzustellen und mit ihr zu interagieren.
+	\item chrono wird verwendet, um den Datentyp NaiveDateTime bereitzustellen, der zur Berechnung der Arbeitszeit in der Anwendung anhand von Anfangs- und Endzeitpunkten genutzt wird.
+	\end{enumerate}
+	
+\subsection{API}
+Nachdem die Abhängigkeiten definiert wurden, kann die API implementiert werden. Die API definiert die Schnittstelle, über die die Anwendung mit dem Benutzer interagiert.
+
+In der Datei \texttt{src/main.rs} wird die Hauptfunktion des Projekts definiert. In dieser Funktion wird eine Instanz des Actix-Webservers gestartet und die Routen der API definiert.
+Die Datei \texttt{src/services.rs} enthält Funktionen, die als HTTP-Endpunkte (API) fungieren, die von Benutzern aufgerufen werden können, um Operationen (Create, Read, Update, Delete) auf einer Datenbank durchzuführen.
+
+\subsubsection{main.rs}
+\paragraph{Importieren von Paketen}:
+\begin{minted}{rust}
+use actix_web::{web::Data, App, HttpServer};
+use dotenv::dotenv;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+
+mod services;
+use services::{fetch_users, fetch_user_workingdays, create_user, create_user_workingday, update_user, update_user_workingday, delete_user, delete_user_workingday};
+\end{minted}
+Hier wird das actix\_web-Paket, das dotenv-Paket sowie das sqlx-packet importiert und ein Modul namens services definiert, in dem Funktionen für HTTP-Endpunkte definiert werden. Die Funktionen werden dann mit use deklariert, damit sie in der Main-Funktion verwendet werden können.
+
+\paragraph{Datenbankverbindungspool}:
+\begin{minted}{rust}
+pub struct AppState {
+    db: Pool<Postgres>
+}
+\end{minted}
+Die Struktur AppState stellt den globalen Zustand der Anwendung dar und enthält eine Datenbankverbindungspool, welche Informationen zum Herstellen einer Verbindung zur PostgreSQL-Datenbank enthält.  Diese Informationen werden in der .env-Datei gespeichert, die von der Bibliothek dotenv geladen wird. Der Datenbankverbindungspool wird im Hauptprogramm erstellt und dann in die AppState-Struktur eingebettet, damit er im gesamten Programmzugriff zur Verfügung steht.
+\paragraph{Main Funktion}:
+\begin{minted}{rust}
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    dotenv().ok();
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
+        .await
+        .expect("Error building a connection pool");
+
+    HttpServer::new(move || {
+        App::new()
+            .app_data(Data::new(AppState { db: pool.clone() }))
+            .service(fetch_users)
+            .service(fetch_user_workingdays)
+            .service(create_user)
+            .service(create_user_workingday)
+            .service(update_user)
+            .service(update_user_workingday)
+            .service(delete_user)
+            .service(delete_user_workingday)
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
+}
+\end{minted}
+Die Main-Funktion richtet einen Webserver mit dem Actix-Web-Framework ein. Sie erstellt einen Verbindungspool zu der PostgreSQL-Datenbank unter Verwendung der PgPoolOptions-Struktur aus der sqlx-Bibliothek. 
+
+Die dotenv-Funktion wird aufgerufen, um die DATABASE\_URL Umgebungsvariable aus der .env-Datei zu laden.
+
+Als nächstes wird ein HttpServer mit der App-Middleware von Actix-Web erstellt. Der Verbindungspool wird mithilfe der app\_data-Methode zum App-Status hinzugefügt. Anschließend werden alle Servicemethoden zum Bearbeiten von HTTP-Anfragen mithilfe der Service-Methode zur App hinzugefügt. Schließlich wird der Server an die IP-Adresse localhost auf Port 8080 gebunden und mit der run-Methode gestartet.
+
+\subsubsection{services.rs}
+Die Datei definiert Strukturen und Funktionen mit spezifischen HTTP-Methoden-Annotationen, die Daten von einer Anfrage erhalten und verarbeiten, um Operationen (Create, Read, Update, Delete) auf einer Datenbank durchzuführen. 
+
+\paragraph{Importieren von Paketen}:
+\begin{minted}{rust}
+use actix_web::{
+    get, post,put, delete,
+    web::{Data, Json, Path},
+    Responder, HttpResponse
+};
+use serde::{Deserialize, Serialize};
+use sqlx::{self, FromRow};
+use chrono::{NaiveDateTime};
+use crate::AppState;
+\end{minted}
+
+Hier werden actix\_web, serde, sqlx und chrono importiert.
+Die actix\_web-Bibliothek wird für die Erstellung von Webanwendungen und APIs in Rust verwendet. 
+Die serde-Bibliothek ist für die Serialisierung und Deserialisierung von Daten zuständig. 
+sqlx ist eine Bibliothek zur Unterstützung von Datenbankzugriffen in Rust. 
+chrono ist eine Bibliothek für Datum und Zeit in Rust.
+AppState stellt eine Struktur dar, die für die Verwaltung des Anwendungszustands in der Rust-Anwendung verwendet wird.
+
+\paragraph{Definieren von Datenstrukturen}:
+\begin{minted}{rust}
+#[derive(Serialize, FromRow)]
+struct User {
+    id: i32,
+    first_name: String,
+    last_name: String,
+}
+#[derive(Serialize, FromRow)]
+struct WorkingDay {
+    id: i32,
+    pub starting_time: Option<String>,
+    pub ending_time: Option<String>,
+    pub working_hours: Option<String>,
+    user_id: i32,
+}
+#[derive(Deserialize)]
+pub struct CreateUser{
+    pub first_name: String,
+    pub last_name: String,
+}
+#[derive(Deserialize)]
+pub struct CreateWorkingDay{
+    pub starting_time: Option<String>,
+    pub ending_time: Option<String>,
+    pub working_hours: Option<i32>,
+}
+\end{minted}
+Die Struktur User hat vier Felder: id, first\_name, last\_name, und ist mit den Traits Serialize und FromRow markiert.
+Die Struktur WorkingDay hat fünf Felder: id, starting\_time, ending\_time, working\_hours und user\_id. starting\_time, ending\_time und working\_hours sind optional, da sie mit dem Datentyp Option definiert sind. 
+Die Strukturen CreateUser und CreateWorkingDay dienen als Eingabe für die Erstellung neuer Benutzer und Arbeitstage. CreateUser hat zwei Felder: first\_name und last\_name. CreateWorkingDay hat ebenfalls drei Felder: starting\_time, ending\_time und working\_hours.
+
+Diese Strukturen sind wichtig für die Verwaltung von Benutzer- und Arbeitstagdaten. Die Verwendung von Traits wie Serialize und FromRow trägt dazu bei, dass diese Datenstrukturen einfach serialisiert und deserialisiert werden können.
+
+\paragraph{Get-Methoden}:
+\begin{minted}{rust}
+#[get("/users")]
+pub async fn fetch_users(state: Data<AppState>) -> impl Responder {
+    match sqlx::query_as::<_, User>("SELECT * FROM users")
+        .fetch_all(&state.db)
+        .await
+    {
+        Ok(users) => HttpResponse::Ok().json(users),
+        Err(err) => HttpResponse::NotFound().json(format!("No users found: {}", err.to_string())),
+    }
+}
+#[get("/users/{id}/workingdays")]
+pub async fn fetch_user_workingdays(state: Data<AppState>, path: Path<i32>) -> impl Responder {
+    let id: i32 = path.into_inner();
+    match sqlx::query_as::<_, WorkingDay>(
+        "SELECT * FROM working_days WHERE user_id = $1"
+    )
+        .bind(id)
+        .fetch_all(&state.db)
+        .await
+    {
+        Ok(workingdays) => HttpResponse::Ok().json(workingdays),
+        Err(err) => HttpResponse::NotFound().json(format!("No workingdays found: {}", err.to_string())),  
+    }
+}
+\end{minted}
+Die erste Funktion, fetch\_users, nimmt eine Data-Instanz des AppState entgegen und gibt alle Benutzer zurück, die in der Datenbank gespeichert sind. Dies wird erreicht, indem eine SQL-Abfrage an die Datenbank gesendet wird, die alle Benutzer abfragt. Das Ergebnis wird dann als JSON formatiert und als HTTP-Antwort zurückgegeben.
+
+Die zweite Funktion, fetch\_user\_workingdays, nimmt ebenfalls eine Data-Instanz des AppState und eine Path-Instanz entgegen, die den id-Parameter vom User enthält. Die Funktion ruft alle Arbeitstage eines bestimmten Benutzers ab, indem eine SQL-Abfrage an die Datenbank gesendet wird, die die Arbeitstage für den angegebenen Benutzer abfragt. Das Ergebnis wird ebenfalls als JSON formatiert und als HTTP-Antwort zurückgegeben.
+Diese Funktionen werden verwendet, um Daten von der Datenbank abzurufen und sie als JSON zu formatieren. Die Verwendung von async ermöglicht es, auf die Datenbank zuzugreifen, ohne dass die Anwendung blockiert wird, während die Abfrage ausgeführt wird.
+
+\paragraph{Post-Methoden}:
+\begin{minted}{rust}
+#[post("/users")]
+pub async fn create_user(state: Data<AppState>, body: Json<CreateUser>) -> impl Responder {
+    match sqlx::query(
+        "INSERT INTO users (first_name, last_name) VALUES ($1, $2)"
+    )
+        .bind(&body.first_name)
+        .bind(&body.last_name)
+        .execute(&state.db)
+        .await
+    {
+        Ok(_) => HttpResponse::Ok().finish(),
+        Err(err) => HttpResponse::InternalServerError().json(format!("Failed to create user: {}", err.to_string())),
+    }
+}
+#[post("/users/{id}/workingdays")]
+pub async fn create_user_workingday(state: Data<AppState>, path: Path<i32>) -> impl Responder {
+    let id: i32 = path.into_inner();
+    match sqlx::query_as::<_, WorkingDay>(
+        "INSERT INTO working_day (user_id) VALUES ($1) RETURNING id, starting_time, ending_time, working_hours, user_id"
+    )
+        .bind(id)
+        .fetch_one(&state.db)
+        .await
+    {
+        Ok(workingday) => HttpResponse::Ok().json(workingday),
+        Err(err) => HttpResponse::InternalServerError().json(format!("Failed to create working day: {}", err.to_string()))
+    }
+}
+\end{minted}
+Die erste Methode create\_user akzeptiert eine JSON-Anfrage mit den Feldern first\_name und last\_name und fügt diese Werte in die users-Tabelle in der Datenbank ein. Die zweite Methode create\_user\_workingday akzeptiert eine Anfrage mit der Benutzer-ID und fügt einen neuen Arbeitstag für diesen Benutzer in die working\_days-Tabelle ein. Der neu erstellte Arbeitstag wird dann in der Antwort zurückgegeben.
+
+\paragraph{Put-Methoden}:
+\begin{minted}{rust}
+#[put("/users/{id}")]
+pub async fn update_user(state: Data<AppState>, path: Path<i32>, body: Json<CreateUser>) -> impl Responder {
+    let id: i32 = path.into_inner();
+    match sqlx::query(
+        "UPDATE users SET first_name = $1, last_name = $2 WHERE id = $3"
+    )
+        .bind(&body.first_name)
+        .bind(&body.last_name)
+        .bind(id)
+        .execute(&state.db)
+        .await
+    {
+        Ok(_) => HttpResponse::Ok().finish(),
+        Err(err) => HttpResponse::InternalServerError().json(format!("Failed to update user: {}", err.to_string()))
+    }
+}
+#[put("/users/{id}/workingdays/{workingday_id}")]
+pub async fn update_user_workingday(
+    state: Data<AppState>,
+    path: Path<(i32, i32)>,
+    body: Json<CreateWorkingDay>,
+) -> impl Responder {
+    let (id, workingday_id): (i32, i32) = path.into_inner();
+    // Parse starting_time and ending_time
+    let start_time_result = NaiveDateTime::parse_from_str(&body.starting_time.as_ref().unwrap(), "%Y-%m-%d %H:%M:%S");
+    let end_time_result = NaiveDateTime::parse_from_str(&body.ending_time.as_ref().unwrap(), "%Y-%m-%d %H:%M:%S");
+    // Check if both start_time and end_time were parsed successfully
+    if let (Ok(start_time), Ok(end_time)) = (start_time_result, end_time_result) {
+        let duration = end_time - start_time;
+        let hours = duration.num_hours();
+        let minutes = duration.num_minutes() - hours * 60;
+        let seconds = duration.num_seconds() - hours * 3600 - minutes * 60;
+        let working_hours = format!("{}:{}:{}", hours, minutes, seconds);
+        match sqlx::query(
+            "UPDATE working_days SET starting_time = $1, ending_time = $2, working_hours = $3 WHERE id = $4 AND user_id = $5"
+        )
+        .bind(&body.starting_time)
+        .bind(&body.ending_time)
+        .bind(&working_hours)
+        .bind(workingday_id)
+        .bind(id)
+        .execute(&state.db)
+        .await
+        {
+            Ok(_) => HttpResponse::Ok().finish(),
+            Err(err) => HttpResponse::InternalServerError().json(format!("Failed to update working day: {}", err.to_string()))
+        }
+    } else {
+        // Handle case where either start_time or end_time could not be parsed
+        HttpResponse::BadRequest().json("Invalid date format")
+    }
+}
+\end{minted}
+
+Die erste Methode update\_user aktualisiert die Informationen des Benutzers in der Datenbank. Der Endpunkt nimmt den Benutzer-ID-Pfadparameter und einen JSON-Body mit den aktualisierten Informationen des Benutzers entgegen. Die SQL-Anweisung wird dann von der Datenbank ausgeführt.
+
+Die zweite Methode update\_user\_workingday aktualisiert die Informationen eines Arbeitstags des Benutzers in der Datenbank. Der Endpunkt nimmt die Benutzer-ID und die Arbeitstags-ID als Pfadparameter und einen JSON-Body mit den aktualisierten Informationen des Arbeitstags entgegen. Dann werden die die start\_time und end\_time aus dem Body als NaiveDateTime geparst und daraus die Arbeitsstunden des Arbeitstags berechnet. Wenn die Start- und Endzeit erfolgreich geparst wurden, bindet der Code die Arbeitszeit an die SQL-Anweisung und führt sie aus. 
+\paragraph{Delete-Methoden}:
+\begin{minted}{rust}
+
+#[delete("/users/{id}")]
+pub async fn delete_user(state: Data<AppState>, path: Path<i32>) -> impl Responder {
+    let id: i32 = path.into_inner();
+    match sqlx::query(
+        "DELETE FROM users WHERE id = $1"
+    )
+        .bind(id)
+        .execute(&state.db)
+        .await
+    {
+        Ok(_) => HttpResponse::Ok().finish(),
+        Err(err) => HttpResponse::InternalServerError().json(format!("Failed to delete user: {}", err.to_string()))
+    }
+}
+
+#[delete("/users/{id}/workingdays/{workingday_id}")]
+pub async fn delete_user_workingday(state: Data<AppState>, path: Path<(i32, i32)>) -> impl Responder {
+    let (id, workingday_id): (i32, i32) = path.into_inner();
+    match sqlx::query(
+        "DELETE FROM working_days WHERE id = $1 AND user_id = $2"
+    )
+        .bind(workingday_id)
+        .bind(id)
+        .execute(&state.db)
+        .await
+    {
+        Ok(_) => HttpResponse::Ok().finish(),
+        Err(err) => HttpResponse::InternalServerError().json(format!("Failed to delete working day: {}", err.to_string()))
+    }
+}
+\end{minted}
+Die erste Metode delete\_user löscht den Benutzer anhand seiner ID aus der Datenbank. Wenn ein Nutzer gelöscht wird, werden auch seine Arbeitstage gelöscht, dies wurde in der Datenbank implementiert.
+
+Die zweite Metode delete\_user\_workingday löscht einen Arbeitstag eines Benutzers. Der Arbeitstag wird anhand der IDs des Benutzers und des Arbeitstags in der Datenbank gelöscht. Wenn der Löschvorgang erfolgreich ist, wird eine HTTP-Antwort mit dem Statuscode 200 zurückgegeben. Andernfalls wird eine HTTP-Antwort mit dem Statuscode 500 zurückgegeben, die den Fehler enthält, der beim Löschen des Arbeitstags aufgetreten ist.
